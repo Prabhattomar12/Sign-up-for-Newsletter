@@ -4,13 +4,13 @@ const express = require("express");
 const bodyparser = require("body-parser");
 const request = require("request");
 require("dotenv").config();
+
 const app = express();
 
 app.use(express.static("public")); // relative address
 app.use(bodyparser.urlencoded({extended:true}));
 const apiKey=process.env.API_KEY;
-const listId=process.env.LIST_ID;
-
+const url = process.env.URL; 
 
 app.get("/",function(req,res){
   res.sendFile(__dirname + "/signup.html");
@@ -39,10 +39,10 @@ var jsonData = JSON.stringify(data);
 
 var options = {
         
- url:'https://us20.api.mailchimp.com/3.0/lists/'+listId ,
+ url: url,
   method: 'POST',
   headers: {
-    'Authorization' : 'prabhat ' + apiKey,
+    'Authorization' : apiKey,
   
 } ,
   body: jsonData
@@ -54,7 +54,7 @@ request(options,function(error,response,body){
   res.sendFile(__dirname + "/failure.html");
 }
   else {
-console.log("status : ",response.statusCode);
+//console.log("status : ",response.statusCode);
 
   if(response.statusCode===200){
     res.sendFile(__dirname + "/success.html");
