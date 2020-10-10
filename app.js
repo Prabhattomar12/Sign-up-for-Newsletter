@@ -3,11 +3,14 @@
 const express = require("express");
 const bodyparser = require("body-parser");
 const request = require("request");
-
+require("dotenv").config();
 const app = express();
 
 app.use(express.static("public")); // relative address
 app.use(bodyparser.urlencoded({extended:true}));
+const apiKey=process.env.API_KEY;
+const listId=process.env.LIST_ID;
+
 
 app.get("/",function(req,res){
   res.sendFile(__dirname + "/signup.html");
@@ -18,7 +21,7 @@ app.post("/",function(req,res){
   var fname = req.body.fname ;
   var lname = req.body.lname;
   var email = req.body.email ;
-console.log(fname,lname,email);
+
   var data = {
     members:[
       {
@@ -35,34 +38,25 @@ console.log(fname,lname,email);
 var jsonData = JSON.stringify(data);
 
 var options = {
-  //host : "us20.api.mailchimp.com",
-//  path : "/3.0/lists/9c496dcd2d/members ",
- url:'https://us20.api.mailchimp.com/3.0/lists/9c496dcd2d' ,
+        
+ url:'https://us20.api.mailchimp.com/3.0/lists/'+listId ,
   method: 'POST',
   headers: {
-    'Authorization' : 'prabhat 409a103a65fee59e6c88b4d532c01870-us20',
-  //  'Content-Type' : "application/json",
-  //  'Content-Length' : jsonData.length
-},
+    'Authorization' : 'prabhat ' + apiKey,
+  
+} ,
   body: jsonData
 };
 
 request(options,function(error,response,body){
   if(error){
-    console.log("prabhat");
   console.log(error);
-
   res.sendFile(__dirname + "/failure.html");
 }
-  else
+  else {
 console.log("status : ",response.statusCode);
-{
 
-
-  // console.log(body);
   if(response.statusCode===200){
-
-
     res.sendFile(__dirname + "/success.html");
   }
 else {
@@ -79,14 +73,9 @@ app.post("/failure",function(req,res){
 });
 
 
-
 app.listen( process.env.PORT  || 3000,function(){
   console.log("Server is running at port 3000");
 });
 
 
-// api key
-//409a103a65fee59e6c88b4d532c01870-us20
 
-// list id
-// 9c496dcd2d
